@@ -88,7 +88,7 @@ function App() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="mb-8">
+        {/* <div className="mb-8">
           <div className="flex items-center justify-center">
             <div className="flex items-center space-x-4">
               <div className="flex items-center">
@@ -153,7 +153,7 @@ function App() {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {currentStep === 1 && (
           <Step1DevoteeDetails
