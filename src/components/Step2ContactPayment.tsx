@@ -75,14 +75,19 @@ export function Step2ContactPayment({ devotees, contact, onContactChange, onBack
                 <div key={devotee.id} className="flex justify-between items-start py-2 border-b border-gray-200 last:border-0">
                   <div>
                     <p className="font-medium text-gray-800">{devotee.name}</p>
-                    <p className="text-sm text-gray-600">Nakshatra: {devotee.nakshatra}</p>
+                    <p className="text-sm text-gray-600">Nakshatram: {devotee.nakshatra}</p>
                     <p className="text-sm text-gray-600">
-                      Date: {new Date(devotee.date).toLocaleDateString('en-IN', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })}
-                    </p>
+  Date: {
+    (() => {
+      const [dateStr] = devotee.date.split(' - ');
+      return new Date(dateStr).toLocaleDateString('en-IN', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    })()
+  }
+</p>
                   </div>
                   <p className="font-medium text-gray-700">₹{AMOUNT_PER_DEVOTEE}</p>
                 </div>

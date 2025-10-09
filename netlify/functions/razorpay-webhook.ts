@@ -69,7 +69,9 @@ console.log("Payload:", payload);
         pooja_price: 200,      // Or get from notes if needed
         devotee_name: devotee.name,
         nakshatram: devotee.nakshatra,
-        pooja_date: devotee.date
+        pooja_date: devotee.date,
+        email: notes.contactEmail,
+        payment_id: paymentEntity.id
       }));
 
       const { error: dbError } = await supabase

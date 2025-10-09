@@ -100,11 +100,11 @@ export function Step1DevoteeDetails({ devotees, onDeveoteesChange, onNext }: Ste
                   <input
                     type="text"
                     value={devotee.name}
-                    onChange={(e) => updateDevotee(devotee.id, 'name', e.target.value)}
+                     onChange={e => updateDevotee(devotee.id, 'name', e.target.value.toUpperCase())}
                     className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent ${
                       errors[`${devotee.id}-name`] ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder="Enter devotee name"
+                    placeholder="ENTER DEVOTEE NAME"
                   />
                   {errors[`${devotee.id}-name`] && (
                     <p className="text-red-500 text-sm mt-1">{errors[`${devotee.id}-name`]}</p>
@@ -143,17 +143,24 @@ export function Step1DevoteeDetails({ devotees, onDeveoteesChange, onNext }: Ste
                       errors[`${devotee.id}-date`] ? 'border-red-500' : 'border-gray-300'
                     }`}
                   >
-                    <option value="">Select Date</option>
-                    {dates.map(date => (
-                      <option key={date} value={date}>
-                        {new Date(date).toLocaleDateString('en-IN', {
-                          weekday: 'long',
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        })}
-                      </option>
-                    ))}
+                     <option value="">Select Date</option>
+  {dates.map(dateEntry => {
+    const [dateStr, star, sanskrit] = dateEntry.split(' - ');
+    let formattedDate = dateStr;
+    try {
+      formattedDate = new Date(dateStr).toLocaleDateString('en-IN', {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch {}
+    return (
+      <option key={dateEntry} value={dateStr}>
+        {formattedDate} {star ? `- ${star} - ${sanskrit}` : ''}
+      </option>
+  );
+})}
                   </select>
                   {errors[`${devotee.id}-date`] && (
                     <p className="text-red-500 text-sm mt-1">{errors[`${devotee.id}-date`]}</p>

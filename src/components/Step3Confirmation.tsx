@@ -84,12 +84,15 @@ export function Step3Confirmation({ bookingData, success, onRetry, onNewBooking 
                     <div>
                       <p className="text-gray-600">Date</p>
                       <p className="font-medium text-gray-800">
-                        {new Date(devotee.date).toLocaleDateString('en-IN', {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric'
-                        })}
-                      </p>
+  {(() => {
+    const [dateStr] = devotee.date.split(' - ');
+    return new Date(dateStr).toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+  })()}
+</p>
                     </div>
                   </div>
                 </div>
