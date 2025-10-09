@@ -80,8 +80,10 @@ function App() {
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50">
       <header className="bg-white shadow-sm border-b border-orange-100">
         <div className="max-w-7xl mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-orange-600">Temple Booking</h1>
-          <p className="text-gray-600 mt-1">Book your temple visit with ease</p>
+          <h1 className="text-2xl font-bold text-black-600">UTTARA GURUVAYURAPPAN TEMPLE</h1>
+          <h6 className="text-1xl font-bold text-black-600">ഉത്തര ഗുരുവായൂരപ്പൻ ക്ഷേത്രം</h6>
+          <p className="text-gray-600 mt-1 font-medium">ARSHA DHARMA PARISHAD (REGD.)</p>
+          <p className="text-orange-600 mt-1 font-bold">KODI ARCHANA BOOKING PORTAL | കോടി അർച്ചന ബുക്കിംഗ് പോർട്ടൽ</p>
         </div>
       </header>
 
@@ -182,8 +184,11 @@ function App() {
       </main>
 
       <footer className="mt-16 bg-white border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-6 text-center text-gray-600 text-sm">
-          Temple Booking System - Secure and Easy Temple Visits
+        <div className="max-w-7xl mx-auto px-4 py-6 text-center text-gray-600 text-sm font-medium">
+          UTTARA GURUVAYURAPPAN TEMPLE - ARSHA DHARMA PARISHAD (REGD.) | Online Booking System by Arthakshetram Inc.
+        </div>
+        <div className="max-w-7xl mx-auto px-4 py-2 text-center text-gray-400 text-xs">
+          &copy; {new Date().getFullYear()} All rights reserved.
         </div>
       </footer>
     </div>

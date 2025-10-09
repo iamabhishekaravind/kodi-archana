@@ -49,7 +49,7 @@ export function Step3Confirmation({ bookingData, success, onRetry, onNewBooking 
         <div className="text-center mb-8">
           <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
           <h2 className="text-3xl font-bold text-gray-800 mb-2">Booking Confirmed!</h2>
-          <p className="text-gray-600">Your temple booking has been successfully processed</p>
+          <p className="text-gray-600">Your booking has been successfully processed</p>
         </div>
 
         <div className="border-t border-gray-200 pt-6">
@@ -118,7 +118,7 @@ export function Step3Confirmation({ bookingData, success, onRetry, onNewBooking 
 
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
             <p className="text-sm text-blue-800">
-              A confirmation email has been sent to <strong>{bookingData.contact.email}</strong>.
+              A confirmation email will be sent to <strong>{bookingData.contact.email}</strong>.
               Please keep this booking reference for your records.
             </p>
           </div>
