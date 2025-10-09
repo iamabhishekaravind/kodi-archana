@@ -44,7 +44,7 @@ export async function initiateRazorpayPayment({
   const totalAmount = bookingData.devotees.length * AMOUNT_PER_DEVOTEE;
 
   // --- Fetch order from backend ---
-  const orderResponse = await fetch('/.netlify/functions/create-order', {
+  const orderResponse = await fetch('/functions/create-order', {
     method: 'POST',
     body: JSON.stringify({ amount: totalAmount }),
     headers: { 'Content-Type': 'application/json' },
