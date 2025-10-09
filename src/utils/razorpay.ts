@@ -29,7 +29,11 @@ interface RazorpayOptions {
   onFailure: () => void;
 }
 
-export async function initiateRazorpayPayment({ bookingData, onSuccess, onFailure }: RazorpayOptions) {
+export async function initiateRazorpayPayment({
+  bookingData,
+  onSuccess,
+  onFailure,
+}: RazorpayOptions) {
   const res = await loadRazorpayScript();
 
   if (!res) {
@@ -39,12 +43,21 @@ export async function initiateRazorpayPayment({ bookingData, onSuccess, onFailur
 
   const totalAmount = bookingData.devotees.length * AMOUNT_PER_DEVOTEE;
 
+  // --- Fetch order from backend ---
+  const orderResponse = await fetch('/.netlify/functions/create-order', {
+    method: 'POST',
+    body: JSON.stringify({ amount: totalAmount }),
+    headers: { 'Content-Type': 'application/json' },
+  });
+  const order = await orderResponse.json();
+
   const options = {
     key: import.meta.env.VITE_RAZORPAY_KEY_ID || '',
-    amount: totalAmount * 100,
-    currency: 'INR',
+    amount: order.amount,
+    currency: order.currency,
     name: 'Temple Booking',
     description: `Booking for ${bookingData.devotees.length} devotee(s)`,
+    order_id: order.id, // <--- Pass the order id here!
     handler: function (response: any) {
       onSuccess(response.razorpay_payment_id, response.razorpay_order_id || '');
     },
