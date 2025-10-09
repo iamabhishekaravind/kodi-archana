@@ -1,5 +1,18 @@
-export async function onRequestPost(context) {
-  const { to, payment_id, devotees, service = "Kodi Archana" } = await context.request.json();
+type Devotee = {
+  name: string;
+  nakshatra: string;
+  date: string | number;
+};
+
+type SendEmailRequest = {
+  to: string;
+  payment_id: string;
+  devotees: Devotee[];
+  service?: string;
+};
+
+export const onRequestPost = async (context: { request: Request; env: Record<string, string> }) => {
+  const { to, payment_id, devotees, service = "Kodi Archana" }: SendEmailRequest = await context.request.json();
   const RESEND_API_KEY = context.env.RESEND_API_KEY;
 
   const guests = devotees.length;
@@ -55,4 +68,4 @@ export async function onRequestPost(context) {
   });
 
   return new Response("Confirmation email sent!", { status: 200 });
-}
+};
