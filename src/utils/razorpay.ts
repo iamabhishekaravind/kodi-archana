@@ -49,6 +49,7 @@ export async function initiateRazorpayPayment({
     body: JSON.stringify({ amount: totalAmount }),
     headers: { 'Content-Type': 'application/json' },
   });
+  //ok
   const order = await orderResponse.json();
 
   const options = {
