@@ -56,7 +56,7 @@ export async function initiateRazorpayPayment({
     key: import.meta.env.VITE_RAZORPAY_KEY_ID || '',
     amount: order.amount,
     currency: order.currency,
-    name: 'Temple Booking',
+    name: 'Arsha Dharma Parishad',
     description: `Booking for ${bookingData.devotees.length} devotee(s)`,
     order_id: order.id, // <--- Pass the order id here!
     handler: function (response: any) {
