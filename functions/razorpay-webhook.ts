@@ -1,52 +1,63 @@
-import { Handler } from '@netlify/functions';
-import crypto from 'crypto';
-import { createClient } from '@supabase/supabase-js';
+type CFContext = {
+  request: Request;
+  env: Record<string, string>;
+};
 
-// Env variables
-const supabaseUrl = process.env.SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+async function verifySignature(body: string, secret: string, signature: string): Promise<boolean> {
+  // Web Crypto API for HMAC SHA256
+  const encoder = new TextEncoder();
+  const keyData = encoder.encode(secret);
+  const algo = { name: "HMAC", hash: "SHA-256" };
 
-const handler: Handler = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: 'Method not allowed' }),
-    };
-  }
+  const cryptoKey = await crypto.subtle.importKey(
+    "raw",
+    keyData,
+    algo,
+    false,
+    ["sign"]
+  );
 
+  const signatureBuffer = await crypto.subtle.sign(
+    algo.name,
+    cryptoKey,
+    encoder.encode(body)
+  );
+  const expectedSignature = Array.from(new Uint8Array(signatureBuffer))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+
+  return expectedSignature === signature;
+}
+
+export const onRequestPost = async (context: CFContext) => {
   try {
-    const razorpaySignature =
-      event.headers['x-razorpay-signature'] ||
-      event.headers['X-Razorpay-Signature'];
-    const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
+    const req = context.request;
+    const webhookSecret = context.env.RAZORPAY_WEBHOOK_SECRET;
+    const supabaseUrl = context.env.SUPABASE_URL;
+    const supabaseKey = context.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!webhookSecret) {
-      console.error('RAZORPAY_WEBHOOK_SECRET not configured');
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: 'Server configuration error' }),
-      };
+      return new Response(JSON.stringify({ error: "Server configuration error" }), { status: 500 });
     }
 
-    const body = event.body || '';
-    const expectedSignature = crypto
-      .createHmac('sha256', webhookSecret)
-      .update(body)
-      .digest('hex');
+    // Get raw body
+    const body = await req.text();
 
-    if (razorpaySignature !== expectedSignature) {
-      console.error('Invalid signature');
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'Invalid signature' }),
-      };
+    // Get header (case insensitive)
+    const razorpaySignature =
+      req.headers.get("x-razorpay-signature") || req.headers.get("X-Razorpay-Signature") || "";
+
+    // Verify signature
+    const validSignature = await verifySignature(body, webhookSecret, razorpaySignature);
+
+    if (!validSignature) {
+      return new Response(JSON.stringify({ error: "Invalid signature" }), { status: 400 });
     }
 
     const payload = JSON.parse(body);
     const eventType = payload.event;
 
-    if (eventType === 'payment.captured') {
+    if (eventType === "payment.captured") {
       const paymentEntity = payload.payload.payment.entity;
       const notes = paymentEntity.notes;
 
@@ -57,16 +68,12 @@ const handler: Handler = async (event) => {
         devotees = [];
       }
 
-      console.log("Webhook received");
-console.log("Received signature:", razorpaySignature);
-console.log("Expected signature:", expectedSignature);
-console.log("Payload:", payload);
-
-      // Loop through devotees and insert each row into Supabase
+      // Supabase insert (use edge client or REST API in Pages Functions)
+      // If you must use @supabase/supabase-js, use fetch to call Supabase REST API
       const rows = devotees.map((devotee: any) => ({
         contact: notes.contactMobile,
-        pooja_name: "Kodi Archana", // Or get from notes if needed
-        pooja_price: 200,      // Or get from notes if needed
+        pooja_name: "Kodi Archana",
+        pooja_price: 200,
         devotee_name: devotee.name,
         nakshatram: devotee.nakshatra,
         pooja_date: devotee.date,
@@ -74,38 +81,28 @@ console.log("Payload:", payload);
         payment_id: paymentEntity.id
       }));
 
-      const { error: dbError } = await supabase
-        .from('bookings') // Replace with your table name
-        .insert(rows);
+      // Use Supabase REST API for insert
+      const supabaseResp = await fetch(`${supabaseUrl}/rest/v1/bookings`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": supabaseKey,
+          "Authorization": `Bearer ${supabaseKey}`,
+          "Prefer": "return=representation"
+        },
+        body: JSON.stringify(rows)
+      });
 
-      if (dbError) {
-        console.error('Supabase insert error:', dbError);
-        return {
-          statusCode: 500,
-          body: JSON.stringify({ error: 'Database insert error' }),
-        };
+      if (!supabaseResp.ok) {
+        const dbError = await supabaseResp.text();
+        return new Response(JSON.stringify({ error: "Database insert error", dbError }), { status: 500 });
       }
 
-      return {
-        statusCode: 200,
-        body: JSON.stringify({
-          success: true,
-          message: 'Payment processed and bookings stored successfully'
-        }),
-      };
+      return new Response(JSON.stringify({ success: true, message: "Payment processed and bookings stored successfully" }), { status: 200 });
     }
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ message: 'Event received' }),
-    };
+    return new Response(JSON.stringify({ message: "Event received" }), { status: 200 });
   } catch (error) {
-    console.error('Webhook error:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Internal server error' }),
-    };
+    return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500 });
   }
 };
-
-export { handler };
