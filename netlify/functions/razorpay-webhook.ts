@@ -66,7 +66,7 @@ console.log("Payload:", payload);
       const rows = devotees.map((devotee: any) => ({
         contact: notes.contactMobile,
         pooja_name: "Kodi Archana", // Or get from notes if needed
-        pooja_price: 200,      // Or get from notes if needed
+        pooja_price: 1,      // Or get from notes if needed
         devotee_name: devotee.name,
         nakshatram: devotee.nakshatra,
         pooja_date: devotee.date,

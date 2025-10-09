@@ -6,7 +6,7 @@ declare global {
   }
 }
 
-const AMOUNT_PER_DEVOTEE = 200;
+const AMOUNT_PER_DEVOTEE = 1;
 
 export function loadRazorpayScript(): Promise<boolean> {
   return new Promise((resolve) => {

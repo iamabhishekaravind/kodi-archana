@@ -116,7 +116,7 @@ export const onRequestPost = async (context: CFContext) => {
       const rows = devotees.map((devotee: any) => ({
         contact: notes.contactMobile,
         pooja_name: "Kodi Archana",
-        pooja_price: 200,
+        pooja_price: 1,
         devotee_name: devotee.name,
         nakshatram: devotee.nakshatra,
         pooja_date: devotee.date,
