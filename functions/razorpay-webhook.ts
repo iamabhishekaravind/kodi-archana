@@ -103,50 +103,127 @@ export const onRequestPost = async (context: CFContext) => {
       const paymentEntity = payload.payload.payment.entity;
       const notes = paymentEntity.notes;
 
+      console.log("Payment notes:", JSON.stringify(notes, null, 2));
+
       let devotees: any[] = [];
       try {
-        devotees = notes.devotees ? JSON.parse(notes.devotees) : [];
-      } catch {
-        devotees = [];
+        if (notes.devotees) {
+          console.log("Raw devotees string:", notes.devotees);
+          devotees = JSON.parse(notes.devotees);
+          console.log("Parsed devotees:", JSON.stringify(devotees, null, 2));
+        } else {
+          console.log("ERROR: No devotees found in notes");
+          return new Response(JSON.stringify({ error: "No devotees data found" }), { status: 400 });
+        }
+      } catch (parseError) {
+        console.log("ERROR: Failed to parse devotees JSON:", parseError);
+        console.log("Raw devotees string that failed:", notes.devotees);
+        return new Response(JSON.stringify({ error: "Failed to parse devotees data" }), { status: 400 });
       }
 
-      console.log("Devotees array:", devotees);
+      if (!Array.isArray(devotees) || devotees.length === 0) {
+        console.log("ERROR: Devotees is not a valid array or is empty:", devotees);
+        return new Response(JSON.stringify({ error: "Invalid devotees data structure" }), { status: 400 });
+      }
 
-      // Supabase insert (use edge client or REST API in Pages Functions)
-      const rows = devotees.map((devotee: any) => ({
-        contact: notes.contactMobile,
-        pooja_name: "Kodi Archana",
-        pooja_price: 200,
-        devotee_name: devotee.name,
-        nakshatram: devotee.nakshatra,
-        pooja_date: devotee.date,
-        email: notes.contactEmail,
-        payment_id: paymentEntity.id
-      }));
+      console.log("Number of devotees to process:", devotees.length);
 
-      console.log("Rows to insert into Supabase:", rows);
-
-      const supabaseResp = await fetch(`${supabaseUrl}/rest/v1/bookings`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "apikey": supabaseKey,
-          "Authorization": `Bearer ${supabaseKey}`,
-          "Prefer": "return=representation"
-        },
-        body: JSON.stringify(rows)
+      // Validate each devotee has required fields
+      const validDevotees = devotees.filter(devotee => {
+        const isValid = devotee.name && devotee.nakshatra && devotee.date;
+        if (!isValid) {
+          console.log("Invalid devotee found:", devotee);
+        }
+        return isValid;
       });
 
-      console.log("Supabase response status:", supabaseResp.status);
-
-      if (!supabaseResp.ok) {
-        const dbError = await supabaseResp.text();
-        console.log("ERROR: Supabase insert error:", dbError);
-        return new Response(JSON.stringify({ error: "Database insert error", dbError }), { status: 500 });
+      if (validDevotees.length === 0) {
+        console.log("ERROR: No valid devotees found after filtering");
+        return new Response(JSON.stringify({ error: "No valid devotees data" }), { status: 400 });
       }
 
-      console.log("Success: Payment processed and bookings stored!");
-      return new Response(JSON.stringify({ success: true, message: "Payment processed and bookings stored successfully" }), { status: 200 });
+      console.log("Valid devotees count:", validDevotees.length);
+
+      // Supabase insert (use edge client or REST API in Pages Functions)
+      const rows = validDevotees.map((devotee: any, index: number) => {
+        const row = {
+          contact: notes.contactMobile,
+          pooja_name: "Kodi Archana",
+          pooja_price: 200,
+          devotee_name: devotee.name,
+          nakshatram: devotee.nakshatra,
+          pooja_date: devotee.date,
+          email: notes.contactEmail,
+          payment_id: paymentEntity.id
+        };
+        console.log(`Row ${index + 1}:`, JSON.stringify(row, null, 2));
+        return row;
+      });
+
+      console.log("Total rows to insert into Supabase:", rows.length);
+      console.log("All rows:", JSON.stringify(rows, null, 2));
+
+      try {
+        const supabaseResp = await fetch(`${supabaseUrl}/rest/v1/bookings`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": supabaseKey,
+            "Authorization": `Bearer ${supabaseKey}`,
+            "Prefer": "return=representation"
+          },
+          body: JSON.stringify(rows)
+        });
+
+        console.log("Supabase response status:", supabaseResp.status);
+        console.log("Supabase response headers:", Object.fromEntries(supabaseResp.headers.entries()));
+
+        const responseText = await supabaseResp.text();
+        console.log("Supabase response body:", responseText);
+
+        if (!supabaseResp.ok) {
+          console.log("ERROR: Supabase insert failed with status:", supabaseResp.status);
+          console.log("ERROR: Supabase error response:", responseText);
+          
+          // Try to parse error details
+          try {
+            const errorData = JSON.parse(responseText);
+            console.log("Parsed error data:", JSON.stringify(errorData, null, 2));
+          } catch (e) {
+            console.log("Could not parse error response as JSON");
+          }
+          
+          return new Response(JSON.stringify({ 
+            error: "Database insert error", 
+            dbError: responseText,
+            status: supabaseResp.status
+          }), { status: 500 });
+        }
+
+        // Try to parse successful response
+        try {
+          const insertedData = JSON.parse(responseText);
+          console.log("Successfully inserted data:", JSON.stringify(insertedData, null, 2));
+          console.log("Number of records inserted:", insertedData.length);
+        } catch (e) {
+          console.log("Could not parse success response as JSON, but operation succeeded");
+        }
+
+        console.log("Success: Payment processed and bookings stored!");
+        return new Response(JSON.stringify({ 
+          success: true, 
+          message: "Payment processed and bookings stored successfully",
+          recordsInserted: rows.length
+        }), { status: 200 });
+        
+      } catch (networkError) {
+        console.log("ERROR: Network error when calling Supabase:", networkError);
+        const errorMessage = networkError instanceof Error ? networkError.message : 'Unknown network error';
+        return new Response(JSON.stringify({ 
+          error: "Network error when inserting data", 
+          details: errorMessage 
+        }), { status: 500 });
+      }
     }
 
     return new Response(JSON.stringify({ message: "Event received" }), { status: 200 });

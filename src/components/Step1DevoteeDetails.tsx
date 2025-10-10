@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Trash2 } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import { Devotee } from '../types';
 
 interface Step1Props {
@@ -25,15 +25,15 @@ export function Step1DevoteeDetails({ devotees, onDeveoteesChange, onNext }: Ste
       .catch(err => console.error('Failed to load dates:', err));
   }, []);
 
-  // const addDevotee = () => {
-  //   const newDevotee: Devotee = {
-  //     id: crypto.randomUUID(),
-  //     name: '',
-  //     nakshatra: '',
-  //     date: ''
-  //   };
-  //   onDeveoteesChange([...devotees, newDevotee]);
-  // };
+  const addDevotee = () => {
+    const newDevotee: Devotee = {
+      id: crypto.randomUUID(),
+      name: '',
+      nakshatra: '',
+      date: ''
+    };
+    onDeveoteesChange([...devotees, newDevotee]);
+  };
 
   const removeDevotee = (id: string) => {
     onDeveoteesChange(devotees.filter(d => d.id !== id));
@@ -171,13 +171,13 @@ export function Step1DevoteeDetails({ devotees, onDeveoteesChange, onNext }: Ste
           ))}
         </div>
 
-        {/* <button
+        <button
           onClick={addDevotee}
           className="mt-6 w-full flex items-center justify-center gap-2 px-6 py-3 border-2 border-dashed border-orange-300 text-orange-600 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-all"
         >
           <Plus className="w-5 h-5" />
           Add Devotee
-        </button> */}
+        </button>
 
         <div className="mt-8 flex justify-end">
           <button

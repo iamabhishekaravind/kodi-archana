@@ -42,6 +42,13 @@ export async function initiateRazorpayPayment({
   }
 
   const totalAmount = bookingData.devotees.length * AMOUNT_PER_DEVOTEE;
+  
+  console.log('=== PAYMENT DEBUG INFO ===');
+  console.log('Total devotees:', bookingData.devotees.length);
+  console.log('Devotees data:', JSON.stringify(bookingData.devotees, null, 2));
+  console.log('Contact info:', JSON.stringify(bookingData.contact, null, 2));
+  console.log('Total amount:', totalAmount);
+  console.log('=========================');
 
   // --- Fetch order from backend ---
   const orderResponse = await fetch('/create-order', {
@@ -70,6 +77,7 @@ export async function initiateRazorpayPayment({
       devotees: JSON.stringify(bookingData.devotees),
       contactMobile: bookingData.contact.mobile,
       contactEmail: bookingData.contact.email,
+      devoteeCount: bookingData.devotees.length.toString(),
     },
     theme: {
       color: '#EA580C',
