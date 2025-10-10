@@ -13,6 +13,30 @@ export async function onRequestPost(context: { request: Request; env: any }) {
       return new Response(JSON.stringify({ error: "Server configuration error" }), { status: 500 });
     }
     
+    // Check if payment ID already exists to prevent duplicates
+    const paymentId = bookingData.paymentId;
+    if (paymentId && paymentId !== "DIRECT_INSERT") {
+      console.log("🔍 Checking for existing payment ID:", paymentId);
+      
+      const checkResp = await fetch(`${supabaseUrl}/rest/v1/bookings?payment_id=eq.${paymentId}&select=payment_id`, {
+        headers: {
+          "apikey": supabaseKey,
+          "Authorization": `Bearer ${supabaseKey}`
+        }
+      });
+      
+      if (checkResp.ok) {
+        const existing = await checkResp.json();
+        if (existing.length > 0) {
+          console.log("⚠️ Payment ID already exists, skipping insert to prevent duplicates");
+          return new Response(JSON.stringify({ 
+            message: "Data already exists", 
+            paymentId: paymentId 
+          }), { status: 200 });
+        }
+      }
+    }
+    
     // Process devotees data
     const rows = bookingData.devotees.map((devotee: any) => ({
       contact: bookingData.contact.mobile,
