@@ -10,7 +10,7 @@ interface Step2Props {
   onPayment: () => void;
 }
 
-const AMOUNT_PER_DEVOTEE = 200;
+const AMOUNT_PER_DEVOTEE = 1;
 
 export function Step2ContactPayment({ devotees, contact, onContactChange, onBack, onPayment }: Step2Props) {
   const [errors, setErrors] = useState<{ mobile?: string; email?: string }>({});
