@@ -29,6 +29,12 @@ async function verifySignature(body: string, secret: string, signature: string):
 }
 
 export const onRequestPost = async (context: CFContext) => {
+  // SUPER OBVIOUS LOGGING
+  console.log("==========================================");
+  console.log("🔥🔥🔥 WEBHOOK STARTED 🔥🔥🔥");
+  console.log("Time:", new Date().toISOString());
+  console.log("==========================================");
+  
   try {
     const req = context.request;
     const webhookSecret = context.env.RAZORPAY_WEBHOOK_SECRET;
@@ -100,6 +106,8 @@ export const onRequestPost = async (context: CFContext) => {
     console.log("Event type:", eventType);
 
     if (eventType === "payment.captured") {
+      console.log("💰 PAYMENT CAPTURED EVENT - Processing devotees data");
+      
       const paymentEntity = payload.payload.payment.entity;
       const notes = paymentEntity.notes;
 
