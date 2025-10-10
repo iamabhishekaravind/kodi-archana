@@ -60,7 +60,7 @@ export const onRequestPost = async (context: { request: Request; env: Record<str
     },
     body: JSON.stringify({
       to,
-      from: 'noreply@mail.arshadharmaparishad.org', // Use your verified sender email
+      from: 'no-reply@mail.arshadharmaparishad.org', // Use your verified sender email
       subject,
       text,
       html
