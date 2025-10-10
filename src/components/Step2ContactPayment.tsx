@@ -142,6 +142,14 @@ export function Step2ContactPayment({ devotees, contact, onContactChange, onBack
           </div>
         </div>
 
+        <section>
+              <h2 className="text-xl font-semibold text-red-800 mt-8 mb-3">NOTE</h2>
+              <p className="mb-4">
+                After payment you may take the screenshot of the confirmation page for your reference.
+              </p>
+            </section>
+
+
         <div className="mt-8 flex justify-between">
           <button
             onClick={onBack}
@@ -154,6 +162,7 @@ export function Step2ContactPayment({ devotees, contact, onContactChange, onBack
             onClick={handlePayment}
             className="flex items-center gap-2 px-8 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-medium"
           >
+            
             <CreditCard className="w-5 h-5" />
             Proceed to Payment
           </button>
