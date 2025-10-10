@@ -47,7 +47,9 @@ function BookingFlow() {
           bookingReference,
         };
         
-        // Store data directly as backup
+        // Webhook handles data storage automatically
+        // Direct backup storage disabled to prevent double entries
+        /*
         try {
           console.log("🔄 Storing booking data directly...");
           const response = await fetch('/store-booking', {
@@ -64,6 +66,7 @@ function BookingFlow() {
         } catch (error) {
           console.log("❌ Direct storage error:", error);
         }
+        */
         
         setBookingData(finalBookingData);
         setPaymentSuccess(true);
