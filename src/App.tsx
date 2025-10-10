@@ -1,11 +1,20 @@
 import { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { Step1DevoteeDetails } from './components/Step1DevoteeDetails';
 import { Step2ContactPayment } from './components/Step2ContactPayment';
 import { Step3Confirmation } from './components/Step3Confirmation';
 import { initiateRazorpayPayment } from './utils/razorpay';
 import { Devotee, ContactInfo, BookingData } from './types';
 
-function App() {
+// Import your policy pages as default exports
+import PricingPolicy from './components/PricingPolicy';
+import ShippingPolicy from './components/ShippingPolicy';
+import PrivacyPolicy from './components/PrivacyPolicy';
+import CancellationRefundPolicy from './components/CancellationRefundPolicy';
+import TermsAndConditions from './components/TermsAndConditions';
+import ContactUs from './components/ContactUs';
+
+function BookingFlow() {
   const [currentStep, setCurrentStep] = useState(1);
   const [devotees, setDevotees] = useState<Devotee[]>([
     {
@@ -77,121 +86,78 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50">
-      <header className="bg-white shadow-sm border-b border-orange-100">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <h1 className="text-2xl font-bold text-black-600">UTTARA GURUVAYURAPPAN TEMPLE</h1>
-          <h6 className="text-1xl font-bold text-black-600">ഉത്തര ഗുരുവായൂരപ്പൻ ക്ഷേത്രം</h6>
-          <p className="text-gray-600 mt-1 font-medium">ARSHA DHARMA PARISHAD (REGD.)</p>
-          <p className="text-orange-600 mt-1 font-bold">KODI ARCHANA BOOKING PORTAL | കോടി അർച്ചന ബുക്കിംഗ് പോർട്ടൽ</p>
-        </div>
-      </header>
+    <main className="max-w-7xl mx-auto px-4 py-8">
+      {currentStep === 1 && (
+        <Step1DevoteeDetails
+          devotees={devotees}
+          onDeveoteesChange={setDevotees}
+          onNext={() => setCurrentStep(2)}
+        />
+      )}
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {/* <div className="mb-8">
-          <div className="flex items-center justify-center">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center">
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-                    currentStep >= 1
-                      ? 'bg-orange-600 text-white'
-                      : 'bg-gray-200 text-gray-600'
-                  }`}
-                >
-                  1
-                </div>
-                <span className="ml-2 text-sm font-medium text-gray-700">
-                  Devotee Details
-                </span>
-              </div>
+      {currentStep === 2 && (
+        <Step2ContactPayment
+          devotees={devotees}
+          contact={contact}
+          onContactChange={setContact}
+          onBack={() => setCurrentStep(1)}
+          onPayment={handlePayment}
+        />
+      )}
 
-              <div className="w-16 h-1 bg-gray-200">
-                <div
-                  className={`h-full transition-all ${
-                    currentStep >= 2 ? 'bg-orange-600' : 'bg-gray-200'
-                  }`}
-                />
-              </div>
+      {currentStep === 3 && bookingData && (
+        <Step3Confirmation
+          bookingData={bookingData}
+          success={paymentSuccess}
+          onRetry={handleRetry}
+          onNewBooking={handleNewBooking}
+        />
+      )}
+    </main>
+  );
+}
 
-              <div className="flex items-center">
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-                    currentStep >= 2
-                      ? 'bg-orange-600 text-white'
-                      : 'bg-gray-200 text-gray-600'
-                  }`}
-                >
-                  2
-                </div>
-                <span className="ml-2 text-sm font-medium text-gray-700">
-                  Contact & Payment
-                </span>
-              </div>
-
-              <div className="w-16 h-1 bg-gray-200">
-                <div
-                  className={`h-full transition-all ${
-                    currentStep >= 3 ? 'bg-orange-600' : 'bg-gray-200'
-                  }`}
-                />
-              </div>
-
-              <div className="flex items-center">
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-                    currentStep >= 3
-                      ? 'bg-orange-600 text-white'
-                      : 'bg-gray-200 text-gray-600'
-                  }`}
-                >
-                  3
-                </div>
-                <span className="ml-2 text-sm font-medium text-gray-700">
-                  Confirmation
-                </span>
-              </div>
-            </div>
+function App() {
+  return (
+    <Router>
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50">
+        <header className="bg-white shadow-sm border-b border-orange-100">
+          <div className="max-w-7xl mx-auto px-4 py-6">
+            <h1 className="text-2xl font-bold text-black-600">UTTARA GURUVAYURAPPAN TEMPLE</h1>
+            <h6 className="text-1xl font-bold text-black-600">ഉത്തര ഗുരുവായൂരപ്പൻ ക്ഷേത്രം</h6>
+            <p className="text-gray-600 mt-1 font-medium">ARSHA DHARMA PARISHAD (REGD.)</p>
+            <p className="text-orange-600 mt-1 font-bold">
+              KODI ARCHANA BOOKING PORTAL | കോടി അർച്ചന ബുക്കിംഗ് പോർട്ടൽ
+            </p>
           </div>
-        </div> */}
+        </header>
 
-        {currentStep === 1 && (
-          <Step1DevoteeDetails
-            devotees={devotees}
-            onDeveoteesChange={setDevotees}
-            onNext={() => setCurrentStep(2)}
-          />
-        )}
+        <Routes>
+          <Route path="/" element={<BookingFlow />} />
+          <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/pricing-policy" element={<PricingPolicy />} />
+          <Route path="/shipping-policy" element={<ShippingPolicy />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/cancellation-refund-policy" element={<CancellationRefundPolicy />} />
+          <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+        </Routes>
 
-        {currentStep === 2 && (
-          <Step2ContactPayment
-            devotees={devotees}
-            contact={contact}
-            onContactChange={setContact}
-            onBack={() => setCurrentStep(1)}
-            onPayment={handlePayment}
-          />
-        )}
-
-        {currentStep === 3 && bookingData && (
-          <Step3Confirmation
-            bookingData={bookingData}
-            success={paymentSuccess}
-            onRetry={handleRetry}
-            onNewBooking={handleNewBooking}
-          />
-        )}
-      </main>
-
-      <footer className="mt-16 bg-white border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-6 text-center text-gray-600 text-sm font-medium">
-          UTTARA GURUVAYURAPPAN TEMPLE - ARSHA DHARMA PARISHAD (REGD.) | Online Booking System by Arthakshetram Inc.
-        </div>
-        <div className="max-w-7xl mx-auto px-4 py-2 text-center text-gray-400 text-xs">
-          &copy; {new Date().getFullYear()} All rights reserved.
-        </div>
-      </footer>
-    </div>
+        <footer className="mt-16 bg-white border-t border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 py-6 text-center text-gray-600 text-sm font-medium">
+            UTTARA GURUVAYURAPPAN TEMPLE - ARSHA DHARMA PARISHAD (REGD.) | Online Booking System by Arthakshetram Inc.
+          </div>
+          <div className="max-w-7xl mx-auto px-4 py-2 text-center text-gray-400 text-xs">
+            &copy; {new Date().getFullYear()} All rights reserved. |
+            <Link to="/contact-us" className="text-blue-600 hover:underline mx-2">Contact Us</Link> |
+            <Link to="/pricing-policy" className="text-blue-600 hover:underline mx-2">Pricing Policy</Link> |
+            <Link to="/shipping-policy" className="text-blue-600 hover:underline mx-2">Shipping Policy</Link> |
+            <Link to="/privacy-policy" className="text-blue-600 hover:underline mx-2">Privacy Policy</Link> |
+            <Link to="/terms-and-conditions" className="text-blue-600 hover:underline mx-2">Terms and Conditions</Link> |
+            <Link to="/cancellation-refund-policy" className="text-blue-600 hover:underline mx-2">Cancellation/Refund Policy</Link>
+          </div>
+        </footer>
+      </div>
+    </Router>
   );
 }
 

@@ -71,7 +71,7 @@ export function Step2ContactPayment({ devotees, contact, onContactChange, onBack
           <div className="bg-gray-50 rounded-lg p-6">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">Booking Summary</h3>
             <div className="space-y-3">
-              {devotees.map((devotee, index) => (
+              {devotees.map((devotee) => (
                 <div key={devotee.id} className="flex justify-between items-start py-2 border-b border-gray-200 last:border-0">
                   <div>
                     <p className="font-medium text-gray-800">{devotee.name}</p>
