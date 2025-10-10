@@ -39,13 +39,32 @@ function BookingFlow() {
 
     initiateRazorpayPayment({
       bookingData: currentBookingData,
-      onSuccess: (paymentId: string) => {
+      onSuccess: async (paymentId: string) => {
         const bookingReference = `BK${Date.now()}`;
         const finalBookingData: BookingData = {
           ...currentBookingData,
           paymentId,
           bookingReference,
         };
+        
+        // Store data directly as backup
+        try {
+          console.log("🔄 Storing booking data directly...");
+          const response = await fetch('/store-booking', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(finalBookingData)
+          });
+          
+          if (response.ok) {
+            console.log("✅ Booking data stored successfully via direct call");
+          } else {
+            console.log("❌ Direct storage failed:", await response.text());
+          }
+        } catch (error) {
+          console.log("❌ Direct storage error:", error);
+        }
+        
         setBookingData(finalBookingData);
         setPaymentSuccess(true);
         setCurrentStep(3);
