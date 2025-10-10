@@ -74,7 +74,11 @@ export async function initiateRazorpayPayment({
       contact: bookingData.contact.mobile,
     },
     notes: {
-      devotees: JSON.stringify(bookingData.devotees),
+      devotees: JSON.stringify(bookingData.devotees.map(devotee => ({
+        n: devotee.name,
+        s: devotee.nakshatra,
+        d: devotee.date
+      }))),
       contactMobile: bookingData.contact.mobile,
       contactEmail: bookingData.contact.email,
       devoteeCount: bookingData.devotees.length.toString(),

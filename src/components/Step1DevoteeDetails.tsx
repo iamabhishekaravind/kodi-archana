@@ -25,7 +25,8 @@ export function Step1DevoteeDetails({ devotees, onDeveoteesChange, onNext }: Ste
       .catch(err => console.error('Failed to load dates:', err));
   }, []);
 
-  const addDevotee = () => {
+   const addDevotee = () => {
+    if (devotees.length >= 3) return; // <-- LIMIT to 3 devotees
     const newDevotee: Devotee = {
       id: crypto.randomUUID(),
       name: '',
@@ -34,6 +35,7 @@ export function Step1DevoteeDetails({ devotees, onDeveoteesChange, onNext }: Ste
     };
     onDeveoteesChange([...devotees, newDevotee]);
   };
+
 
   const removeDevotee = (id: string) => {
     onDeveoteesChange(devotees.filter(d => d.id !== id));
@@ -173,10 +175,15 @@ export function Step1DevoteeDetails({ devotees, onDeveoteesChange, onNext }: Ste
 
         <button
           onClick={addDevotee}
-          className="mt-6 w-full flex items-center justify-center gap-2 px-6 py-3 border-2 border-dashed border-orange-300 text-orange-600 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-all"
+          disabled={devotees.length >= 3}
+          className={`mt-6 w-full flex items-center justify-center gap-2 px-6 py-3 border-2 border-dashed rounded-lg transition-all ${
+            devotees.length >= 3
+              ? 'border-gray-300 text-gray-400 cursor-not-allowed bg-gray-50'
+              : 'border-orange-300 text-orange-600 hover:border-orange-500 hover:bg-orange-50'
+          }`}
         >
           <Plus className="w-5 h-5" />
-          Add Devotee
+          {devotees.length >= 3 ? 'Maximum 3 Devotees Allowed' : 'Add Devotee'}
         </button>
 
         <div className="mt-8 flex justify-end">
