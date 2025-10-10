@@ -28,10 +28,16 @@ async function verifySignature(body: string, secret: string, signature: string):
   return expectedSignature === signature;
 }
 
-export const onRequestPost = async (context: CFContext) => {
+interface Env {
+  RAZORPAY_WEBHOOK_SECRET: string;
+  SUPABASE_URL: string;
+  SUPABASE_SERVICE_ROLE_KEY: string;
+}
+
+export async function onRequestPost(context: { request: Request; env: Env }) {
   // SUPER OBVIOUS LOGGING
   console.log("==========================================");
-  console.log("🔥🔥🔥 WEBHOOK STARTED 🔥🔥🔥");
+  console.log("🔥🔥🔥 CLOUDFLARE WEBHOOK STARTED 🔥🔥🔥");
   console.log("Time:", new Date().toISOString());
   console.log("==========================================");
   
@@ -42,10 +48,12 @@ export const onRequestPost = async (context: CFContext) => {
     const supabaseKey = context.env.SUPABASE_SERVICE_ROLE_KEY;
 
     // Debug: Log incoming request details
-    console.log("Webhook received!");
-    console.log("Request method:", req.method);
-    console.log("Webhook secret present:", !!webhookSecret);
-    console.log("Supabase URL present:", !!supabaseUrl);
+    console.log("🔍 Webhook received!");
+    console.log("🔍 Request method:", req.method);
+    console.log("🔍 Webhook secret present:", !!webhookSecret);
+    console.log("🔍 Supabase URL present:", !!supabaseUrl);
+    console.log("🔍 Supabase Key present:", !!supabaseKey);
+    console.log("🔍 Environment keys available:", Object.keys(context.env));
 
     if (!webhookSecret) {
       console.log("ERROR: RAZORPAY_WEBHOOK_SECRET not configured");

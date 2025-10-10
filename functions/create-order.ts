@@ -1,9 +1,9 @@
-type CFContext = {
-  request: Request;
-  env: Record<string, string>;
-};
+interface Env {
+  RAZORPAY_KEY_ID: string;
+  RAZORPAY_KEY_SECRET: string;
+}
 
-export const onRequestPost = async (context: CFContext) => {
+export async function onRequestPost(context: { request: Request; env: Env }) {
   try {
     const { amount } = await context.request.json();
 
