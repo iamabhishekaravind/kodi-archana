@@ -146,7 +146,7 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
 
       // Validate each devotee has required fields
       const validDevotees = devotees.filter(devotee => {
-        const isValid = devotee.name && devotee.nakshatra && devotee.date;
+        const isValid = devotee.n && devotee.s && devotee.d;
         if (!isValid) {
           console.log("Invalid devotee found:", devotee);
         }
@@ -166,9 +166,9 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
           contact: notes.contactMobile,
           pooja_name: "Kodi Archana",
           pooja_price: 200,
-          devotee_name: devotee.name,
-          nakshatram: devotee.nakshatra,
-          pooja_date: devotee.date,
+          devotee_name: devotee.n,
+          nakshatram: devotee.s,
+          pooja_date: devotee.d,
           email: notes.contactEmail,
           payment_id: paymentEntity.id
         };
