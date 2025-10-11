@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import { ArrowLeft, CreditCard } from 'lucide-react';
 import { Devotee, ContactInfo } from '../types';
+import { useState } from 'react';
 
 interface Step2Props {
   devotees: Devotee[];
@@ -22,20 +22,20 @@ export function Step2ContactPayment({ devotees, contact, onContactChange, onBack
     return mobileRegex.test(mobile);
   };
 
-  // const validateEmail = (email: string) => {
-  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  //   return emailRegex.test(email);
-  // };
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+   return emailRegex.test(email);
+  };
 
   const handleMobileChange = (value: string) => {
     onContactChange({ ...contact, mobile: value });
     setErrors(prev => ({ ...prev, mobile: '' }));
   };
 
-  // const handleEmailChange = (value: string) => {
-  //   onContactChange({ ...contact, email: value });
-  //   setErrors(prev => ({ ...prev, email: '' }));
-  // };
+  const handleEmailChange = (value: string) => {
+    onContactChange({ ...contact, email: value });
+    setErrors(prev => ({ ...prev, email: '' }));
+  };
 
   const validate = () => {
     const newErrors: { mobile?: string; email?: string } = {};
@@ -46,11 +46,11 @@ export function Step2ContactPayment({ devotees, contact, onContactChange, onBack
       newErrors.mobile = 'Please enter a valid 10-digit mobile number';
     }
 
-    // if (!contact.email.trim()) {
-    //   newErrors.email = 'Email address is required';
-    // } else if (!validateEmail(contact.email)) {
-    //   newErrors.email = 'Please enter a valid email address';
-    // }
+    if (!contact.email.trim()) {
+      newErrors.email = 'Email address is required';
+    } else if (!validateEmail(contact.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -121,7 +121,7 @@ export function Step2ContactPayment({ devotees, contact, onContactChange, onBack
                 )}
               </div>
 
-              {/* <div>
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Email Address <span className="text-red-500">*</span>
                 </label>
@@ -137,7 +137,7 @@ export function Step2ContactPayment({ devotees, contact, onContactChange, onBack
                 {errors.email && (
                   <p className="text-red-500 text-sm mt-1">{errors.email}</p>
                 )}
-              </div> */}
+              </div>
             </div>
           </div>
         </div>
@@ -145,7 +145,7 @@ export function Step2ContactPayment({ devotees, contact, onContactChange, onBack
         <section>
               <h2 className="text-xl font-semibold text-red-800 mt-8 mb-3">NOTE</h2>
               <p className="mb-4">
-                After payment you may take the screenshot of the confirmation page for your reference.
+                Receipt will be sent to this email address. Receipt will be required for collecting prasadam.
               </p>
             </section>
 
