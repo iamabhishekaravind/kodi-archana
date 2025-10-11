@@ -13,6 +13,7 @@ export function loadRazorpayScript(): Promise<boolean> {
     if (window.Razorpay) {
       resolve(true);
       return;
+      
     }
 
     const script = document.createElement('script');
