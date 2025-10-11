@@ -6,14 +6,14 @@ declare global {
   }
 }
 
-const AMOUNT_PER_DEVOTEE = 1;
+const AMOUNT_PER_DEVOTEE = 200;
 
 export function loadRazorpayScript(): Promise<boolean> {
   return new Promise((resolve) => {
     if (window.Razorpay) {
       resolve(true);
       return;
-
+      
     }
 
     const script = document.createElement('script');
