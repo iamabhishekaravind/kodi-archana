@@ -183,7 +183,7 @@ export function Step1DevoteeDetails({ devotees, onDeveoteesChange, onNext }: Ste
           }`}
         >
           <Plus className="w-5 h-5" />
-          {devotees.length >= 3 ? 'Maximum 3 Devotees Allowed at a time, for more repeat again.' : 'Add Devotee'}
+          {devotees.length >= 3 ? 'Maximum 3 Devotees Allowed at a time, for more repeat again once this is done.' : 'Add Devotee'}
         </button>
 
         <div className="mt-8 flex justify-end">
