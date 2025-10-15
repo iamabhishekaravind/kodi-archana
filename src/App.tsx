@@ -145,12 +145,26 @@ function App() {
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50">
         <header className="bg-white shadow-sm border-b border-orange-100">
           <div className="max-w-7xl mx-auto px-4 py-6">
-            <h1 className="text-1xl font-bold text-black-600">UTTARA GURUVAYURAPPAN TEMPLE</h1>
-            <h6 className="text-1xl font-bold text-black-600">ഉത്തര ഗുരുവായൂരപ്പൻ ക്ഷേത്രം</h6>
-            <p className="text-gray-600 mt-1 font-medium">ARSHA DHARMA PARISHAD (REGD.)</p>
-            <p className="text-orange-600 mt-1 font-bold">
-              KODI ARCHANA BOOKING PORTAL | കോടി അർച്ചന ബുക്കിംഗ് പോർട്ടൽ
-            </p>
+            <div className="flex items-center space-x-6">
+              {/* Logo */}
+              <div className="flex-shrink-0">
+                <img 
+                  src="/logo.png" 
+                  alt="Uttara Guruvayurappan Temple Logo" 
+                  className="h-24 w-24 object-contain"
+                />
+              </div>
+              
+              {/* Temple Information - keeping original layout */}
+              <div>
+                <h1 className="text-1xl font-bold text-black-600">UTTARA GURUVAYURAPPAN TEMPLE</h1>
+                <h6 className="text-1xl font-bold text-black-600">ഉത്തര ഗുരുവായൂരപ്പൻ ക്ഷേത്രം</h6>
+                <p className="text-gray-600 mt-1 font-medium">ARSHA DHARMA PARISHAD (REGD.)</p>
+                <p className="text-orange-600 mt-1 font-bold">
+                  KODI ARCHANA BOOKING PORTAL | കോടി അർച്ചന ബുക്കിംഗ് പോർട്ടൽ
+                </p>
+              </div>
+            </div>
           </div>
         </header>
 
