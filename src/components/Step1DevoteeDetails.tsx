@@ -115,7 +115,7 @@ export function Step1DevoteeDetails({ devotees, onDeveoteesChange, onNext }: Ste
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Nakshatra <span className="text-red-500">*</span>
+                    Nakshatram / Star <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={devotee.nakshatra}
@@ -124,7 +124,7 @@ export function Step1DevoteeDetails({ devotees, onDeveoteesChange, onNext }: Ste
                       errors[`${devotee.id}-nakshatra`] ? 'border-red-500' : 'border-gray-300'
                     }`}
                   >
-                    <option value="">Select Nakshatra</option>
+                    <option value="">Select Nakshatram</option>
                     {nakshatras.map(nakshatra => (
                       <option key={nakshatra} value={nakshatra}>{nakshatra}</option>
                     ))}
