@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { Step1DevoteeDetails } from './components/Step1DevoteeDetails';
 import { Step2ContactPayment } from './components/Step2ContactPayment';
 import { Step3Confirmation } from './components/Step3Confirmation';
+import { ThankYouPage } from './components/ThankYouPage';
 import { initiateRazorpayPayment } from './utils/razorpay';
 import { Devotee, ContactInfo, BookingData } from './types';
 
@@ -169,7 +170,8 @@ function App() {
         </header>
 
         <Routes>
-          <Route path="/" element={<BookingFlow />} />
+          <Route path="/" element={<ThankYouPage />} />
+          <Route path="/booking" element={<BookingFlow />} />
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/pricing-policy" element={<PricingPolicy />} />
           <Route path="/shipping-policy" element={<ShippingPolicy />} />
